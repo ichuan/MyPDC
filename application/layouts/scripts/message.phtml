@@ -1,0 +1,54 @@
+<!DOCTYPE html> 
+<html>
+<head>
+<?php
+$this->headScript()->prependFile('/static/js/jquery-1.4.2.min.js');
+$this->headScript()->appendFile('/static/js/pdc.js');
+$this->headLink()->appendStylesheet('/static/css/style.css');
+echo $this->headMeta();
+echo $this->headTitle();
+echo $this->headLink();
+echo $this->headScript();
+echo $this->headStyle();
+?>
+</head>
+<body>
+    <div id="header">
+        <div class="container">
+            <div id="logo">
+                <a href="/"><img src="/static/image/logo.png" alt="MyPDC" title="MyPDC" /></a>
+            </div>
+            <div id="nav">
+                <ul>
+                    <?php if ($this->user):?>
+                    <li class="avatarname"><a href="/member/<?php echo urlencode($this->user->username) ?>"><img width="20" height="20" alt="<?php echo $this->user->username ?>" src="<?php $this->avatar($this->user) ?>"><?php _h($this->user->username) ?></a></li>
+                    <li><a href="/code"><?php _e('代码') ?></a></li>
+                    <li><a href="/collection"><?php _e('收藏') ?></a></li>
+                    <li><a href="/setting"><?php _e('设置') ?></a></li>
+                    <li><a href="/signout"><?php _e('登出') ?></a></li>
+                    <?php else:?>
+                    <li><a href="/signin"><?php _e('登录') ?></a></li>
+                    <li><a href="/signup"><?php _e('注册') ?></a></li>
+                    <?php endif;?>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr class="clear sep10" />
+    <div id="content" class="container">
+        <div id="main">
+            <h1><?php _e($this->message[0] === 'fail' ? '发生了一个错误' : '操作提示') ?></h1>
+            <div class="notice <?php echo $this->message[0]?>"><?php echo $this->message[1]?></div>
+            <p><?php echo sprintf(_t('点 %s这里%s 返回之前的页面，或点 %s这里%s 返回首页。'), '<a href="javascript:history.back();">', '</a>', '<a href="/">', '</a>') ?></p>
+        </div>
+        <div id="sidebar"></div>
+    </div>
+    <hr class="clear sep10" />
+    <div id="footer">
+        <div class="container">
+            <div id="poweredby"><a target="_blank" href="http://zendframework.com/"><img border="0" align="absmiddle" alt="Powered by Zend Framework" title="Powered by Zend Framework" src="/static/image/zf.gif"></a> &nbsp; <a target="_blank" href="http://www.postgresql.org/"><img border="0" align="absmiddle" alt="Powered by Postgres SQL" title="Powered by Postgres SQL" src="/static/image/pg.png"></a></div>
+            <div>&copy;2010 <a href="<?php echo APPURL ?>"><?php echo APPNAME ?></a> by <a href="http://blog.ichuan.net">ichuan</a>. <a href="/about"><strong>About</strong></a> | <a href="/feedback"><strong>Feedback</strong></a> | <a href="#header"><strong>Top&uarr;</strong></a> <span id="language"><a onclick="return resetLang('en')" href="#en">English</a> <a href="#zh" onclick="return resetLang('zh')">简体中文</a></span> </div>
+        </div>
+    </div>
+</body>
+</html>

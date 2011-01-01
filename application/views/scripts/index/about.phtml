@@ -1,0 +1,33 @@
+<?php
+$this->headTitle()->append($this->translate('关于'));
+$this->placeholder('main')->captureStart();
+?>
+<h1><?php _e('关于本站') ?></h1>
+<h2><?php _e('什么是PDC？') ?></h2>
+<p><?php _e('见右边的介绍') ?></p>
+<h2><?php _e('为什么要做这个网站？') ?></h2>
+<p><?php _e('我一直想做一个东西，可以记录我人生中遇到的所有信息，无论是哪天做了一个什么样的梦，还是一次回老家的经历，或者是偶然发现的一段牛逼闪闪的代码，又或者是在回龙观大街上用手机拍的一张照片，等等。。。') ?></p>
+<p><?php _e('所有这些信息都被完整、保密地保存着，等到我闲暇的时候，或者到了我老了的时候，可以翻开这些记录，回味自己的人生经历。') ?></p>
+<p><?php echo sprintf(_t('用网站来实现这些功能，这是我的目标。此网站一直在开发中，具体进度请看：%sPlan%s'), '<a href="/plan">', '</a>'); ?></p>
+<h2><?php _e('用啥东西做的这个网站？') ?></h2>
+<p><?php echo sprintf(_t('这个网站用 %sPHP%s 语言开发，使用了 %sZend Framework%s 框架，后台存储使用的是 %sPostgres SQL%s 数据库，运行在一台 128MB 内存的 VPS 上。'), '<a target="_blank" href="http://php.net">', '</a>', '<a target="_blank" href="http://zendframework.com/">', '</a>', '<a target="_blank" href="http://www.postgresql.org/">', '</a>') ?></p>
+<h2><?php _e('联系方式') ?></h2>
+<p><?php echo sprintf(_t('你可以使用这个邮件地址联系我：%s，或者点击页面底部的 Feedback 链接给我留言。'), '<img style="margin-bottom:-4px;" src="/static/image/yc-mail.gif" />') ?></p>
+<?php 
+$this->placeholder('main')->captureEnd();
+$this->placeholder('sidebar')->captureStart();
+?>
+<h3><?php _e('什么是PDC？') ?></h3>
+<p>
+    <ul class="size12">
+        <li><strong>P</strong>ersonal <strong>D</strong>ata <strong>C</strong>enter</li>
+        <li><strong>P</strong>rivate <strong>D</strong>ata <strong>C</strong>enter</li>
+        <li><strong>P</strong>ermanent <strong>D</strong>ata <strong>C</strong>enter</li>
+        <li><strong>P</strong>rogrammer's <strong>D</strong>ata <strong>C</strong>enter</li>
+    </ul>
+</p>
+<p><?php _e('简单说，这里就是你的个人数据中心，而且是私有的、永久的。你可以将人生旅程中做过的事、遇到的人、看到的一个网页、一段音乐或视频、一片代码记录在此。所有这些数据只有你自己看的到。') ?></p>
+<p><?php _e('这个网站主要是面向程序员的。') ?></p>
+<h3><?php _e('我能在这里做什么？') ?></h3>
+<p><?php _e('你可以将平时遇到的经典代码收集于此以供未来的项目中重用；你可以将一篇优美的博文、一些好听的歌曲收藏于此。') ?></p>
+<?php $this->placeholder('sidebar')->captureEnd()?>

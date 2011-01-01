@@ -1,0 +1,88 @@
+<?php
+$this->headTitle()->append(_t('用户管理'));
+$this->placeholder('main')->captureStart();
+$q = buildUrlQuery($this->params, array('page'));
+$url = '/admin/member?';
+if ($q !== '')
+    $url .= $q . '&';
+?>
+<script type="text/javascript">
+function doajax(ele, from, to)
+{
+     $.get(ele.attr('href'), function(data){
+         if (data == 'ok'){
+            ele.attr('href', ele.attr('href').replace(from, to)).attr('title', to);
+            ele.get(0).firstChild.src = ele.get(0).firstChild.src.replace(from, to);
+         }
+     });
+}
+$(function(){
+    $('.delmember').click(function(){
+         var ele = $(this);
+         $.get(ele.attr('href'), function(data){
+             if (data == 'ok')
+                 ele.parent().parent().fadeOut();
+         });
+         return false;
+    });
+    $('.blockmember').click(function(){
+        var ele = $(this);
+        $.get(ele.attr('href'), function(data){
+            if (data == 'ok'){
+                ele.hide();
+            }
+        });
+        return false;
+    });
+});
+</script>
+<h1><?php _e('系统管理') ?></h1>
+<ul class="tabs">
+    <li><a href="/admin/index"><?php _e('系统状态') ?></a></li>
+    <li><a href="/admin/audit"><?php _e('审计日志') ?></a></li>
+    <li><a href="/admin/mantain"><?php _e('系统维护') ?></a></li>
+    <li><a class="selected" href="/admin/member"><?php _e('用户管理') ?></a></li>
+</ul>
+<table cellspacing="0" cellpadding="0">
+    <tbody>
+        <tr>
+            <th class="align-right" width="60"><?php _e('角色') ?></th>
+            <th><?php _e('用户名') ?></th>
+            <th width="160"><?php _e('电子邮件') ?></th>
+            <th width="100"><?php _e('加入时间') ?></th>
+            <th width="60"><?php _e('操作') ?></th>
+        </tr>
+<?php
+$i = 0;
+foreach ($this->members as $member):
+$style = $i++ % 2 ? 'odd' : 'even';
+$blocked = $member['blocked'] ? 'unblock' : 'block';
+?>
+        <tr class="<?php echo $style ?>">
+            <td class="gray align-right"><?php echo htmlspecialchars($member['role']) ?></td>
+            <td><?php echo htmlspecialchars($member['username']) ?></td>
+            <td><?php echo htmlspecialchars($member['email']) ?></td>
+            <td class="gray date" title="<?php echo $member['date_join'] ?>"><?php echo friendlyDate($member['date_join']) ?></td>
+            <td><a href="/ajax/member/delete/<?php echo $member['id'] ?>" class="confirm delmember" rel="<?php _e('确实要删除此用户吗？') ?>"><img src="/static/image/action_delete.png" alt="delete" title="<?php _e('删除')?>" /></a> <a class="blockmember" href="/ajax/member/<?php echo $blocked, '/', $member['id'] ?>"><img src="/static/image/action_<?php echo $blocked?>.png" alt="<?php echo $blocked?>" title="<?php echo $blocked?>" /></a></td>
+        </tr>
+<?php endforeach;?>
+    </tbody>
+</table>
+<div class="pagination">
+    <ul>
+        <li><a href="#" class="noborder disablelink"><?php echo $this->pages->current, '/', ($this->pages->last == 0 ? 1 : $this->pages->last)?></a></li>
+        <li><a href="<?php if (isset($this->pages->previous)) echo $url, 'page=', $this->pages->previous; else echo '#" class="disablelink' ?>"><?php _e('« 上页') ?></a></li>
+    <?php
+    foreach ($this->pages->pagesInRange as $page)
+        echo '<li><a href="', $url, 'page=', $page, '" ', ($this->pages->current == $page ? 'class="currentpage"' : ''), ">$page</a></li>";
+    ?>
+        <li><a href="<?php if (isset($this->pages->next)) echo $url, 'page=', $this->pages->next; else echo '#" class="disablelink' ?>"><?php _e('下页 »') ?></a></li>
+    </ul>
+</div>
+<?php
+$this->placeholder('main')->captureEnd();
+$this->placeholder('sidebar')->captureStart();
+?>
+<h3><?php _e('帮助') ?></h3>
+<p><?php _e('你可以使用"标签"、"语言"和"名称"来过滤出想看到的代码。多个标签或多个语言之间是"或"的关系，名称、标签和语言三者是"与"的关系。') ?></p>
+<?php $this->placeholder('sidebar')->captureEnd()?>

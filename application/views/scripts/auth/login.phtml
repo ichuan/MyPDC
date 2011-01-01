@@ -1,0 +1,36 @@
+<?php
+$this->headTitle()->append(_t('登入'));
+$this->placeholder('main')->captureStart();
+?>
+<h1><?php _e('登入') ?></h1>
+<?php
+if($this->message)
+    echo '<div class="notice fail">', $this->message, '</div>';
+?>
+<form action="/signin" method="post">
+<table class="vert">
+    <tr class="odd">
+        <th width="100"><?php _e('用户名')?></th>
+        <td><input type="text" class="text" name="username" value="<?php echo $this->username?>" /></td>
+    </tr>
+    <tr class="even">
+        <th><?php _e('密码')?></th>
+        <td><input type="password" class="text" name="password" value="" /></td>
+    </tr>
+    <tr class="odd">
+        <th></th>
+        <td><button name="action_button" class="classy" type="submit"><span><?php _e('提交') ?></span></button> <span id="reset_password"><a href="/reset_password"><?php _e('忘记密码了？') ?></a></span></td>
+    </tr>
+</table>
+<?php if($this->next):?>
+<input type="hidden" value="<?php echo $this->next?>" name="next" />
+<?php endif;?>
+</form>
+<?php
+$this->placeholder('main')->captureEnd();
+$this->placeholder('sidebar')->captureStart();
+?>
+<h3><?php _e('登入') ?></h3>
+<p><?php _e('登入你的帐号来使用这里的服务。') ?></p>
+<p><?php _e('成功登入后，Cookie 将被浏览器记住一年。') ?></p>
+<?php $this->placeholder('sidebar')->captureEnd()?>

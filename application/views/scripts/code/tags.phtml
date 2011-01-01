@@ -1,0 +1,29 @@
+<?php
+$this->headTitle()->append(_t('标签'));
+$this->placeholder('main')->captureStart();
+shuffle($this->tags);
+$sizes = generateSizeArray($this->tags);
+?>
+<h1><?php _e('我的代码') ?></h1>
+<a class="minibutton action" href="/code/new"><img src="/static/image/action_add.png" /><?php _e('添加代码') ?></a>
+<ul class="tabs">
+    <li><a href="/code/index"><?php echo _e('代码列表') ?></a></li>
+    <li><a class="selected" href="/code/tags"><?php _e('标签列表') ?></a></li>
+    <li><a href="/code/languages"><?php _e('语言列表') ?></a></li>
+</ul>
+<p class="tags">
+<?php
+if (count($this->tags))
+    foreach ($this->tags as $tag)
+        echo '<a class="tag" title="',sprintf(_t('%s 个代码'), $tag['counter']),'" style="font-size:', $sizes[$tag['id']],'px!important;" href="/code/tag/', urlencode($tag['tag_name']), '">', htmlspecialchars($tag['tag_name']), "</a>\n";
+else
+    _e('暂时没有标签');
+?>
+</p>
+<?php
+$this->placeholder('main')->captureEnd();
+$this->placeholder('sidebar')->captureStart();
+?>
+<h3><?php _e('帮助') ?></h3>
+<p><?php _e('这里展示的是你经常使用的标签，点击某个标签以查看有哪些代码被标记为这个标签。') ?></p>
+<?php $this->placeholder('sidebar')->captureEnd()?>

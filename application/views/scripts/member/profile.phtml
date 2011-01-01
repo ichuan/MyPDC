@@ -1,0 +1,51 @@
+<?php
+$this->headTitle()->append($this->member['username']);
+$this->placeholder('Content')->captureStart();
+?>
+<div class="box">
+    <div class="cell">
+    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+            <td width="73" valign="top" align="center"><img src="<?php echo $this->avatar($this->member, 'large')?>" border="0" alt="<?php echo $this->member['username']?>" /></td>
+            <td width="10" valign="top"></td>
+            <td width="auto" align="left" valign="top"><div class="sep5"></div><span class="bigger"><?php echo $this->member['username']?></a></span>
+                <div class="sep5"></div>
+                <span class="snow"><?php echo sprintf($this->translate('%s 第 %d 号会员，加入于 %s，最后活动于 %s'), APPNAME, $this->member['id'], $this->member['date_join'], $this->friendlyDate($this->member['last_active']))?></span>
+            </td>
+        </tr>
+    </table>
+    </div>
+    <?php if($this->member['bio']):?>
+    <div class="inner"><?php echo $this->escape($this->member['bio'])?></div>
+    <?php endif;?>
+</div>
+<div class="sep20"></div>
+<div class="box">
+    <div class="cell"><span class="fade"><?php echo $this->translate('最近上传的文档')?></span></div>
+    <div class="inner">
+        <table cellpadding="5" cellspacing="0" border="0" width="100%" class="topics">
+            <tr>
+                <th align="left" width="auto"><?php echo $this->translate('名称')?></td>
+                <th align="left" width="64"><?php echo $this->translate('大小')?></td>
+                <th align="left" width="64"><?php echo $this->translate('浏览次数')?></td>
+                <th align="left" width="64"><?php echo $this->translate('下载次数')?></td>
+                <th align="left" width="64"><?php echo $this->translate('受欢迎度')?></td>
+                <th align="left" width="64"><?php echo $this->translate('上传时间')?></td>
+            </tr>
+<?php
+$this->cycle()->assign(array('odd', 'even'));
+foreach ($this->recentDocs as $doc):
+?>
+            <tr class="fade <?php echo $this->cycle()->next()?>">
+                <td align="left" class="lend"><a href="<?php echo $this->url(array(1 => $doc['id']), 'doc')?>"><?php echo $this->escape($doc['title']);?></a></td>
+                <td align="left"><?php echo $this->friendlySize($doc['file_size'])?></td>
+                <td align="left"><?php echo $doc['views']?></td>
+                <td align="left"><?php echo $doc['downloads']?></td>
+                <td align="left"><?php echo $this->score($doc['likes'], $doc['dislikes'])?></td>
+                <td align="left" class="rend"><?php echo $this->friendlyDate($doc['date_upload'])?></td>
+            </tr>
+<?php endforeach;?>
+        </table>
+    </div>
+</div>
+<?php $this->placeholder('Content')->captureEnd()?>

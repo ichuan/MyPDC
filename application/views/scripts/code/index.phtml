@@ -1,0 +1,115 @@
+<?php
+$this->placeholder('main')->captureStart();
+$q = buildUrlQuery($this->params, array('page'));
+$url = '/code?';
+if ($q !== '')
+    $url .= $q . '&';
+?>
+<script type="text/javascript">
+var noAutoFocus = true, baseUrl = '/code';
+<?php
+foreach ($this->params as $k => $v)
+    echo 'params[\'', $k, '\'] = ', json_encode($v), ";\n";
+?>
+$(function(){
+    $('#lang').autocomplete(langs, {
+        mustMatch: true,
+        autoFill: true,
+        width: 85,
+        scrollHeight:260,
+        formatMatch: function(row){ return row[1]; },
+        formatItem: function(row){ return row[1]; }
+    });
+    $('#tags').autocomplete('/ajax/tags', {
+        autoFill: true,
+        width:85,
+        formatMatch: function(row){ return row['tag_name']; },
+        formatItem: function(row){ return row['tag_name']; },
+        parse: function(data){
+            try{
+                data = eval(data);
+            }catch(e){ return []; }
+            var ret = [], i = 0;
+            for (; i < data.length; i++)
+                ret[ret.length] = {data: data[i], value: data[i]['tag_name'], result: data[i]['tag_name']};
+            return ret;
+        }
+    });
+});
+</script>
+<h1><?php _e('我的代码') ?></h1>
+<a class="minibutton action" href="/code/new"><img src="/static/image/action_add.png" /><?php _e('添加代码') ?></a>
+<?php
+if(isset($this->message))
+    echo '<div class="notice ',$this->message[0],'">', $this->message[1], '</div>';
+?>
+<ul class="tabs">
+    <li><a class="selected" href="/code/index"><?php echo _e('代码列表') ?></a></li>
+    <li><a href="/code/tags"><?php _e('标签列表') ?></a></li>
+    <li><a href="/code/languages"><?php _e('语言列表') ?></a></li>
+</ul>
+<table cellspacing="0" cellpadding="0">
+    <tbody>
+        <tr>
+            <th class="align-right" width="80"><?php _e('语言') ?></th>
+            <th><?php _e('名称') ?></th>
+            <th width="60"><?php _e('大小') ?></th>
+            <th width="100"><?php _e('添加时间') ?></th>
+            <th width="60"><?php _e('操作') ?></th>
+        </tr>
+<?php
+$i = 0;
+foreach ($this->codes as $code):
+$style = $i++ % 2 ? 'odd' : 'even';
+$lang = $this->langs[$code['language_id']];
+?>
+        <tr class="<?php echo $style ?>">
+            <td class="align-right"> <a class="green" href="/code/language/<?php echo urlencode($lang) ?>"><?php echo $lang ?></a></td>
+            <td><a href="/code/<?php echo $code['id'] ?>"><?php echo htmlspecialchars($code['title']) ?></a></td>
+            <td class="gray" title="<?php echo $code['codebytes'] ?> bytes"><?php echo friendlySize($code['codebytes']) ?></td>
+            <td class="gray date" title="<?php echo $code['created'] ?>"><?php echo friendlyDate($code['created']) ?></td>
+            <td><a href="/code/delete/<?php echo $code['id'] ?>" class="confirm" rel="<?php _e('确实要删除此份代码吗？') ?>"><img src="/static/image/action_delete.png" alt="delete" title="<?php _e('删除')?>" /></a> <a href="/code/edit/<?php echo $code['id'] ?>"><img src="/static/image/action_edit.png" alt="edit" title="<?php _e('编辑') ?>" /></a> <a href="/code/download/<?php echo $code['id'] ?>"><img src="/static/image/action_download.png" alt="download" title="<?php _e('下载代码')?>" /></a></td>
+        </tr>
+<?php endforeach;?>
+    </tbody>
+</table>
+<div class="pagination">
+    <ul>
+        <li><a href="#" class="noborder disablelink"><?php echo $this->pages->current, '/', ($this->pages->last == 0 ? 1 : $this->pages->last)?></a></li>
+        <li><a href="<?php if (isset($this->pages->previous)) echo $url, 'page=', $this->pages->previous; else echo '#" class="disablelink' ?>"><?php _e('« 上页') ?></a></li>
+    <?php
+    foreach ($this->pages->pagesInRange as $page)
+        echo '<li><a href="', $url, 'page=', $page, '" ', ($this->pages->current == $page ? 'class="currentpage"' : ''), ">$page</a></li>";
+    ?>
+        <li><a href="<?php if (isset($this->pages->next)) echo $url, 'page=', $this->pages->next; else echo '#" class="disablelink' ?>"><?php _e('下页 »') ?></a></li>
+    </ul>
+</div>
+<?php
+$this->placeholder('main')->captureEnd();
+$this->placeholder('sidebar')->captureStart();
+?>
+<h3><?php _e('语言过滤') ?></h3>
+<?php if(count($this->params['language'])):?>
+<p class="filter">
+    <?php
+    foreach ($this->params['language'] as $lang)
+        echo '<a class="tag" href="/code/language/', urlencode($lang), '">', htmlspecialchars($lang), '</a><sup rel="language">X</sup>';
+    ?>
+</p>
+<?php endif;?>
+<p><input type="text" id="lang" class="text short" /><a class="minibutton newfilter" href="/code/language" rel="language"><?php _e('增加语言') ?></a></p>
+<h3><?php _e('标签过滤') ?></h3>
+<?php if(count($this->params['tag'])):?>
+<p class="filter">
+    <?php
+    foreach ($this->params['tag'] as $tag)
+        echo '<a class="tag" href="/code/tag/', urlencode($tag), '">', htmlspecialchars($tag), '</a><sup rel="tag">X</sup>';
+    ?>
+</p>
+<?php endif;?>
+<p><input type="text" id="tags" class="text short" /><a class="minibutton newfilter" href="/code/language" rel="tag"><?php _e('增加标签') ?></a></p>
+<h3><?php _e('名称过滤') ?></h3>
+<p><input type="text" id="title" class="text short" value="<?php echo htmlspecialchars($this->params['title']) ?>" /><a class="minibutton newfilter" href="/code" rel="title"><?php _e('搜索名称') ?></a></p>
+<h3><?php _e('帮助') ?></h3>
+<p><?php _e('你可以使用"标签"、"语言"和"名称"来过滤出想看到的代码。多个标签或多个语言之间是"或"的关系，名称、标签和语言三者是"与"的关系。') ?></p>
+<?php $this->placeholder('sidebar')->captureEnd()?>

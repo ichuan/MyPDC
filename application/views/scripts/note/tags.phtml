@@ -1,0 +1,30 @@
+<?php
+$this->headTitle()->append(_t('标签'));
+$this->placeholder('main')->captureStart();
+shuffle($this->tags);
+$sizes = generateSizeArray($this->tags);
+?>
+<h1><?php _e('我的记事本') ?></h1>
+<div class="action">
+    <a class="minibutton" href="/note?new=memo"><img src="/static/image/action_add.png" /><?php _e('新记事')?></a>
+</div>
+<ul class="tabs">
+    <li><a href="/note"><?php _e('我的记事本') ?></a></li>
+    <li><a class="selected" href="/note/tags"><?php _e('标签') ?></a></li>
+</ul>
+<p class="tags">
+<?php
+if (count($this->tags))
+    foreach ($this->tags as $tag)
+        echo '<a class="tag" title="',sprintf(_t('%s 个记事'), $tag['counter']),'" style="font-size:', $sizes[$tag['id']],'px!important;" href="/note/tag/', urlencode($tag['tag_name']), '">', htmlspecialchars($tag['tag_name']), "</a>\n";
+else
+    _e('暂时没有标签');
+?>
+</p>
+<?php
+$this->placeholder('main')->captureEnd();
+$this->placeholder('sidebar')->captureStart();
+?>
+<h3><?php _e('帮助') ?></h3>
+<p><?php _e('这里展示的是你经常使用的标签，点击某个标签以查看有哪些记事被标记为这个标签。') ?></p>
+<?php $this->placeholder('sidebar')->captureEnd()?>

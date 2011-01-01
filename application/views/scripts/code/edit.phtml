@@ -1,0 +1,108 @@
+<?php
+$t = $this->op == 'new' ? _t('添加') : _t('编辑');
+if (!isset($this->code))
+    $this->code = array(
+            'id'          => null,
+            'title'       => null,
+            'code'        => null,
+            'language_id' => null,
+            'description' => null,
+            'tags'        => array(),
+    );
+if ($this->op !== 'new')
+    $this->op = 'edit/' . $this->code['id'];
+$this->headTitle()->append($t);
+$this->placeholder('main')->captureStart();
+?>
+<script type="text/javascript">
+var tags = <?php echo json_encode($this->code['tags']) ?>;
+$(function(){
+    $('#_code').keydown(function(event){
+        if (event.keyCode == 9){
+            insertAtCursor(this, '    ');
+            return false;
+        }
+    });
+    $('#lang').autocomplete(langs, {
+        mustMatch: true,
+        autoFill: true,
+        width: 206,
+        scrollHeight:260,
+        formatMatch: function(row){ return row[1]; },
+        formatItem: function(row){ return row[1]; }
+    });
+    $('#tags').val(tags.join(', '));
+    $('#tags').autocomplete('/ajax/tags', {
+        autoFill: true,
+        multiple: true,
+        multipleSeparator: ',',
+        width:206,
+        formatMatch: function(row){ return row['tag_name']; },
+        formatItem: function(row){ return row['tag_name']; },
+        parse: function(data){
+            try{
+                data = eval(data);
+            }catch(e){ return []; }
+            var ret = [], i = 0;
+            for (; i < data.length; i++)
+                ret[ret.length] = {data: data[i], value: data[i]['tag_name'], result: data[i]['tag_name']};
+            return ret;
+        }
+    });
+});
+function more()
+{
+    var t = $('#more').next();
+    $('#more').remove();
+    t.fadeIn('fast');
+    return false;
+}
+</script>
+<h1><?php echo $t ?></h1>
+<?php
+if ($this->op != 'new')
+    echo '<a class="minibutton action confirm" rel="',_t('确实要放弃修改吗？'),'" href="/code/', $this->code['id'], '">', _t('放弃修改'), '</a>';
+if($this->message)
+    echo '<div class="notice fail">', $this->message, '</div>';
+?>
+<form action="/code/<?php echo $this->op ?>" method="post" id="_form" onsubmit="$('#_tags').val($('#tags').val());return true;">
+<table class="vert">
+    <tr class="odd">
+        <th width="60"><?php _e('名称')?></th>
+        <td><input type="text" class="text long" name="title" value="<?php echo $this->code['title']?>" /></td>
+    </tr>
+    <tr class="even">
+        <th><?php _e('语言')?></th>
+        <td><input type="text" class="text" name="language" id="lang" value="<?php if (isset($this->code['language']) && in_array($this->code['language'], $this->langs)) echo $this->code['language']; ?>" />
+            <span class="gray size12"><?php _e('输入此代码所使用的编程语言') ?></span>
+    </tr>
+    <tr class="odd">
+        <th><?php _e('代码')?></th>
+        <td><textarea class="text long high" id="_code" name="code"><?php echo htmlspecialchars($this->code['code']) ?></textarea>
+    </tr>
+    <tr class="even" id="more">
+        <th></th>
+        <td><a href="#more" onclick="return more();"><?php _e('其他选项')?>&rarr;</a></td>
+    </tr>
+    <tr class="even" style="display:none;">
+        <th><?php _e('说明')?></th>
+        <td><textarea class="text long midhigh" name="description"><?php echo htmlspecialchars($this->code['description']) ?></textarea></td>
+    </tr>
+    <tr class="odd">
+        <th></th>
+        <td><button name="action_button" class="classy" type="submit"><span><?php _e('提交') ?></span></button></td>
+    </tr>
+</table>
+<input type="hidden" value="" name="tags" id="_tags" />
+</form>
+<?php
+$this->placeholder('main')->captureEnd();
+$this->placeholder('sidebar')->captureStart();
+?>
+<h3><?php _e('标签') ?></h3>
+<input type="text" class="text" id="tags" />
+<p><?php _e('为这份代码贴上一些标签，比如：Zend Framework, plugin 等。各标签之间以英文逗号分开。') ?></p>
+<h3><?php _e('帮助') ?></h3>
+<p><?php _e('在"语言"一栏输入任意字符，会有匹配的语言显示出来。') ?></p>
+<p><?php echo sprintf(_t('"其他选项"中的"说明"一栏支持 %sMarkdown%s 语法。'), '<a target="_blank" href="http://daringfireball.net/projects/markdown/">', '</a>') ?></p>
+<?php $this->placeholder('sidebar')->captureEnd()?>

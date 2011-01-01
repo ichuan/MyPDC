@@ -1,0 +1,26 @@
+<?php
+// avoid error like 'Cannot nest placeholder captures for the same placeholder'
+try{
+    $this->placeholder('main')->captureStart();
+    ?>
+    <h1>404 Not Found</h1>
+    <p><?php _e('你来到了一个错误的页面，请检查你的操作。') ?></p>
+    <p><?php echo sprintf(_t('点 %s这里%s 返回之前的页面，或点 %s这里%s 返回首页。'), '<a href="javascript:history.back();">', '</a>', '<a href="/">', '</a>') ?></p>
+    <?php 
+    if ($this->user && $this->user->role == 'admin'){
+        echo '<div class="notice fail"><strong>params</strong>:',"<br />",nl2br(var_export($this->request->getParams(), 1));
+        if (isset($this->exception))
+            echo '<br /><strong>',$this->message, '</strong><br />', $this->exception->getMessage(), '<br />', nl2br($this->exception->getTraceAsString());
+        echo '</div>';
+    }
+    $this->placeholder('main')->captureEnd();
+} catch (Exception $e) {
+    if ($this->user && $this->user->role == 'admin'){
+        echo '<div class="notice fail"><strong>params</strong>:',"<br />",nl2br(var_export($this->request->getParams(), 1));
+        if (isset($this->exception))
+            echo '<br /><strong>',$this->message, '</strong><br />', $this->exception->getMessage(), '<br />', nl2br($this->exception->getTraceAsString());
+        echo '</div>';
+    }
+
+}
+?>

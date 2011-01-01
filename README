@@ -1,0 +1,21 @@
+
+what is PDC ?
+=============
+
+PDC == Personal Data Center
+
+see http://mypdc.info/ for more
+
+
+Install
+=======
+
+After you get this source file, check the install/ dir, there's a `apache.conf` file for the web server.
+Along in that folder, there is a `postgres.sql` file for you to create a postgresql database.
+Then run install.sh in that folder to init the web folder
+
+There're 2 sample config file in application/configs/, remember to copy and rename them to application.php and config.php
+
+Because ZendFramework is so big, it isn't included in MyPDC, you have to download it from http://zendframework.com/download/latest, and unarchive it to library/Zend directory
+
+Sorry for so little install instructions here, feel free to concat me in case any problems encontered.

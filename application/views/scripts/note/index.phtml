@@ -1,0 +1,150 @@
+<?php
+$this->headScript()->appendFile('/static/js/jquery.fancybox-1.3.1.pack.js');
+$this->headLink()->appendStylesheet('/static/css/jquery.fancybox-1.3.1.css');
+$this->placeholder('main')->captureStart();
+$q = buildUrlQuery($this->params, array('page'));
+$url = '/note?';
+if ($q !== '')
+    $url .= $q . '&';
+?>
+<script type="text/javascript">
+var noAutoFocus = true, baseUrl = '/note';
+<?php
+foreach ($this->params as $k => $v)
+    echo 'params[\'', $k, '\'] = ', json_encode($v), ";\n";
+?>
+$(function(){
+    $('.note').hover(noteMouseOver, noteMouseOut);
+    $('.note .title').click(dealClick);
+    $('.note .del').click(dealDelete);
+    $('.note .check').click(dealCheck);
+    $('.note .uncheck').click(dealUnCheck);
+    $('.note .pin').click(dealPin);
+    $('.note .unpin').click(dealUnPin);
+    $('.note .edit').click(dealEdit);
+    $('#_newmemo').click(newmemo);
+    $('#memoContent').keyup(function(){
+        var i = $(this).attr('scrollHeight'), j = $(this).height();
+        if (i - j > 20)
+            $(this).height(i);
+    });
+    $('#memoSave').click(memoSave);
+    $('#memoTags,#tags').autocomplete('/ajax/note/tags/all', {
+        autoFill: true,
+        multiple: true,
+        multipleSeparator: ',',
+        width:206,
+        formatMatch: function(row){ return row['tag_name']; },
+        formatItem: function(row){ return row['tag_name']; },
+        parse: function(data){
+            try{
+                data = eval(data);
+            }catch(e){ return []; }
+            var ret = [], i = 0;
+            for (; i < data.length; i++)
+                ret[ret.length] = {data: data[i], value: data[i]['tag_name'], result: data[i]['tag_name']};
+            return ret;
+        }
+    });
+    var prefeches = {
+        'http://mypdc.info/static/image/note_bg.png': new Image(),
+        'http://mypdc.info/static/image/top.png': new Image(),
+        'http://mypdc.info/static/image/loading-bg.gif': new Image()
+    };
+    $.each(prefeches, function(k, v){ v.src = k; });
+    <?php if($this->new == 'memo') echo 'newmemo();';?>
+});
+function memoSave()
+{
+    var c = $.trim($('#memoContent').val()), t = $.trim($('#memoTags').val());
+    if (c == '')
+        return $.fancybox("<?php _e('记事内容不能为空') ?>");
+    $.fancybox.showActivity();
+    var p = {content:c, tags: t};
+    if ($('#newmemo').data('noteid'))
+        p['id'] = $('#newmemo').data('noteid');
+    $.ajax({
+        type: 'POST',
+        cache: false,
+        dataType: 'json',
+        url: '/ajax/note/memo/new',
+        data: p,
+        success: function(data){
+            $.fancybox.hideActivity();
+            if (!data || !data.id)
+                $.fancybox('<?php _e('保存记事失败')?>');
+            else
+                _insertNote(data);
+        }
+    });
+    return false;
+}
+</script>
+<h1><?php _e('我的记事本') ?></h1>
+<div class="action">
+    <a id="_newmemo" class="minibutton" href="#header"><img src="/static/image/action_add.png" /><?php _e('新记事')?></a>
+</div>
+<ul class="tabs">
+    <li><a class="selected" href="/note"><?php _e('我的记事本') ?></a></li>
+    <li><a href="/note/tags"><?php _e('标签') ?></a></li>
+    <li class="ops"><a href="/note/export/xls/<?php echo TIMESTAMP?>" title="<?php _e('将所有记事导出为 Excel 文件') ?>"><img src="/static/image/toxls.png" /></a> <a href="/note/export/rss/<?php echo TIMESTAMP?>" title="<?php _e('将所有记事导出为 RSS') ?>"><img src="/static/image/rss.png" /></a></li>
+</ul>
+<div id="newmemo" style="display:none;">
+    <div><textarea id="memoContent"></textarea></div>
+    <div><button id="memoSave" class="classy" type="submit"><span><?php _e('保存')?></span></button></div>
+</div>
+<div id="notes">
+<?php
+foreach ($this->notes as $note):
+    $tags = getTagsFromPsqlStr($note['tags']);
+?>
+    <div class="note<?php if($note['top']) echo ' top'?>" noteid="<?php echo $note['id'] ?>">
+        <div class="title"><?php if ($note['checked']) echo '<del class="gray">',_h($note['title'], false),'</del>'; else _h($note['title']); ?></div>
+        <div class="meta"><div class="right hide"><?php if(!$note['checked']):?><a href="#" class="check"><?php _e('标记') ?></a><?php else:?><a href="#" class="uncheck"><?php _e('取消标记') ?></a><?php endif;?><?php if(!$note['top']):?><a href="#" class="pin"><?php _e('置顶') ?></a><?php else:?><a href="#" class="unpin"><?php _e('取消置顶') ?></a><?php endif;?><a href="#" class="edit"><?php _e('编辑') ?></a><a href="#" class="del"><?php _e('删除') ?></a></div><span title="<?php echo $note['created']?>" class="time"><?php echo friendlyDate($note['created']) ?></span><?php if(count($tags)):?><span class="tags"><?php foreach($tags as $t) echo sprintf('<a href="/note/tag/%s">%s</a>', urlencode($t), $t) ?></span><?php endif;?></div>
+    </div>
+<?php endforeach; ?>
+    <div class="pagination">
+        <ul>
+            <li><a href="#" class="noborder disablelink"><?php echo $this->pages->current, '/', ($this->pages->last == 0 ? 1 : $this->pages->last)?></a></li>
+            <li><a href="<?php if (isset($this->pages->previous)) echo $url, 'page=', $this->pages->previous; else echo '#" class="disablelink' ?>"><?php _e('« 上页') ?></a></li>
+        <?php
+        foreach ($this->pages->pagesInRange as $page)
+            echo '<li><a href="', $url, 'page=', $page, '" ', ($this->pages->current == $page ? 'class="currentpage"' : ''), ">$page</a></li>";
+        ?>
+            <li><a href="<?php if (isset($this->pages->next)) echo $url, 'page=', $this->pages->next; else echo '#" class="disablelink' ?>"><?php _e('下页 »') ?></a></li>
+        </ul>
+    </div>
+</div>
+<?php
+$this->placeholder('main')->captureEnd();
+$this->placeholder('sidebar')->captureStart();
+?>
+<div id="normalSidbar">
+    <h3><?php _e('查询') ?></h3>
+    <p><form action="/note" method="get"><input type="text" name="search" class="text short" /><button class="classy" type="submit"><span><?php _e('查询') ?></span></button></form></p>
+    <p><?php _e('按关键字查询以前的记事内容') ?></p>
+    <h3><?php _e('标签过滤') ?></h3>
+    <?php if(count($this->params['tag'])):?>
+    <p class="filter">
+        <?php
+        foreach ($this->params['tag'] as $tag)
+            echo '<a class="tag" href="/note/tag/', urlencode($tag), '">', htmlspecialchars($tag), '</a><sup rel="tag">X</sup>';
+        ?>
+    </p>
+<?php endif;?>
+<p><input type="text" id="tags" class="text short" /><a class="minibutton newfilter" href="/note/tags" rel="tag"><?php _e('增加标签') ?></a></p>
+    <h3><?php _e('帮助') ?></h3>
+    <p><?php _e('点击"新记事"来记录任何事情。每个保存的记事都可以"标记"，标记后表示该事情已结束，这个功能可将记事本作为一个简单的 TODO List 使用。') ?></p>
+    <p><?php _e('点击右上角的各种图标可以将你的所有记事内容导出。') ?></p>
+    <p><?php echo sprintf(_t('记事内容支持富文本内容（新增记事时以 %sMarkdown%s 语法书写'), '<a target="_blank" href="http://daringfireball.net/projects/markdown/">', '</a>') ?></p>
+    <p><?php echo sprintf(_t('%s这里%s 有一份简单的 Markdown 速查手册。'), '<a href="/doc/markdown">', '</a>') ?></p>
+</div>
+<div id="memoSidebar" style="display:none;">
+    <h3><?php _e('标签') ?></h3>
+    <input type="text" class="text" id="memoTags" />
+    <p><?php _e('为这篇记事贴上一些标签，比如：日记, 学习计划 等。各标签之间以英文逗号分开。') ?></p>
+    <h3><?php _e('帮助') ?></h3>
+    <p><?php echo sprintf(_t('第一行文字将成为标题；记事本内容支持按 %sMarkdown%s 语法书写。'), '<a target="_blank" href="http://daringfireball.net/projects/markdown/">', '</a>') ?></p>
+    <p><?php echo sprintf(_t('%s这里%s 有一份简单的 Markdown 速查手册。'), '<a href="/doc/markdown">', '</a>') ?></p>
+</div>
+<?php $this->placeholder('sidebar')->captureEnd()?>

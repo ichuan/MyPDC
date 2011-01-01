@@ -1,0 +1,12 @@
+<?php
+$this->headTitle()->append(_t('登出'));
+$this->placeholder('main')->captureStart();
+?>
+<h1><?php _e('登出') ?></h1>
+<p><?php echo sprintf(_t('你已经成功登出。%s重新登入%s'), '<a href="/signin">', '</a>') ?></p>
+<?php
+$this->placeholder('main')->captureEnd();
+$this->placeholder('sidebar')->captureStart();
+?>
+<h3><?php _e('登出') ?></h3>
+<?php $this->placeholder('sidebar')->captureEnd()?>

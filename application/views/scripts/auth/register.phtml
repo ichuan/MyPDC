@@ -1,0 +1,50 @@
+<?php
+$this->headTitle()->append(_t('注册'));
+$obj = $this;
+$checkError = function($field) use ($obj) {
+    if (isset($obj->message[$field]))
+        echo '<span class="error">', $obj->message[$field], '</span>';
+};
+$this->placeholder('main')->captureStart();
+?>
+<h1><?php _e('注册') ?></h1>
+<form action="/signup" method="post">
+<table class="vert">
+    <tr class="odd">
+        <th width="100"><?php _e('用户名')?></th>
+        <td><input type="text" class="text" name="username" value="<?php echo $this->username?>" /> <?php $checkError('username') ?></td>
+    </tr>
+    <tr class="even">
+        <th><?php _e('密码')?></th>
+        <td><input type="password" class="text" name="password" value="" /> <?php $checkError('password') ?></td>
+    </tr>
+    <tr class="odd">
+        <th><?php _e('电子邮件地址')?></th>
+        <td><input type="text" class="text" name="email" value="<?php echo $this->email?>" /> <?php $checkError('email') ?></td>
+    </tr>
+    <tr class="even">
+        <th><?php _e('验证码')?></th>
+        <td>
+            <?php
+                $zci = Zend_Registry::get('Zend_Captcha_Image');
+                echo $zci->render();
+            ?>
+            <input type="hidden" name="captchaId" value="<?php echo $this->captchaId?>" />
+            <input type="text" autoComplete="off" class="text" name="captcha" value="" /> <?php $checkError('captcha') ?>
+        </td>
+    </tr>
+    <tr class="odd">
+        <th></th>
+        <td><button name="action_button" class="classy" type="submit"><span><?php _e('提交') ?></span></button></td>
+    </tr>
+</table>
+</form>
+<?php
+$this->placeholder('main')->captureEnd();
+$this->placeholder('sidebar')->captureStart();
+?>
+<h3><?php _e('注册') ?></h3>
+<p><?php _e('注册一个帐号来使用这里的服务。') ?></p>
+<p><?php _e('用户名只能使用字母、数字、减号和下划线里的字符，并且不能超过 64 个字符。') ?></p>
+<p><?php echo sprintf(_t('电子邮件地址是用来接收我们发送的通知信件和获取你的 %sGravatar%s 头像的。'), '<a target="_blank" href="http://en.gravatar.com/">', '</a>') ?></p>
+<?php $this->placeholder('sidebar')->captureEnd()?>

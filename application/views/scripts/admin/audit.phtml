@@ -1,0 +1,56 @@
+<?php
+$this->headTitle()->append(_t('日志审计'));
+$this->placeholder('main')->captureStart();
+$q = buildUrlQuery($this->params, array('page'));
+$url = '/admin/audit?';
+if ($q !== '')
+    $url .= $q . '&';
+$types = array_flip(ICE_Audit::getTypes());
+?>
+<h1><?php _e('系统管理') ?></h1>
+<ul class="tabs">
+    <li><a href="/admin/index"><?php _e('系统状态') ?></a></li>
+    <li><a class="selected" href="/admin/audit"><?php _e('审计日志') ?></a></li>
+    <li><a href="/admin/mantain"><?php _e('系统维护') ?></a></li>
+    <li><a href="/admin/member"><?php _e('用户管理') ?></a></li>
+</ul>
+<table cellspacing="0" cellpadding="0">
+    <tbody>
+        <tr>
+            <th class="align-right" width="60"><?php _e('类型') ?></th>
+            <th><?php _e('内容') ?></th>
+            <th width="60"><?php _e('用户') ?></th>
+            <th width="100"><?php _e('日志时间') ?></th>
+        </tr>
+<?php
+$i = 0;
+foreach ($this->audits as $audit):
+$style = $i++ % 2 ? 'odd' : 'even';
+?>
+        <tr class="<?php echo $style ?>">
+            <td class="align-right"> <?php if(!$this->params['audit_type']):?><a class="green" href="<?php echo $url?>audit_type=<?php echo $audit['audit_type'] ?>"><?php echo $types[$audit['audit_type']]?></a><?php else: echo $types[$audit['audit_type']]; endif;?></td>
+            <td><?php echo htmlspecialchars($audit['content']) ?></td>
+            <td><?php if(!$this->params['member_id']):?><a href="<?php echo $url?>member_id=<?php echo $audit['member_id']?>"><?php echo htmlspecialchars($audit['username']) ?></a><?php else: echo htmlspecialchars($audit['username']); endif;?></td>
+            <td class="gray date" title="<?php echo $audit['date_audit'] ?>"><?php echo friendlyDate($audit['date_audit']) ?></td>
+        </tr>
+<?php endforeach;?>
+    </tbody>
+</table>
+<div class="pagination">
+    <ul>
+        <li><a href="#" class="noborder disablelink"><?php echo $this->pages->current, '/', ($this->pages->last == 0 ? 1 : $this->pages->last)?></a></li>
+        <li><a href="<?php if (isset($this->pages->previous)) echo $url, 'page=', $this->pages->previous; else echo '#" class="disablelink' ?>"><?php _e('« 上页') ?></a></li>
+    <?php
+    foreach ($this->pages->pagesInRange as $page)
+        echo '<li><a href="', $url, 'page=', $page, '" ', ($this->pages->current == $page ? 'class="currentpage"' : ''), ">$page</a></li>";
+    ?>
+        <li><a href="<?php if (isset($this->pages->next)) echo $url, 'page=', $this->pages->next; else echo '#" class="disablelink' ?>"><?php _e('下页 »') ?></a></li>
+    </ul>
+</div>
+<?php
+$this->placeholder('main')->captureEnd();
+$this->placeholder('sidebar')->captureStart();
+?>
+<h3><?php _e('帮助') ?></h3>
+<p><?php _e('你可以使用"标签"、"语言"和"名称"来过滤出想看到的代码。多个标签或多个语言之间是"或"的关系，名称、标签和语言三者是"与"的关系。') ?></p>
+<?php $this->placeholder('sidebar')->captureEnd()?>

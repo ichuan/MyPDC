@@ -1,0 +1,32 @@
+<?php
+$this->placeholder('main')->captureStart();
+
+clearstatcache();
+$freeSpace = disk_free_space('/');
+$totalSpace = disk_total_space('/');
+$cacheSize = shell_exec('du -sh /var/www/pdc/application/data/cache/ | sed "s/\\t.*//"');
+$cacheFiles = shell_exec('find /var/www/pdc/application/data/cache/ -type f | wc -l');
+$totalCodes = ICE_Global::getModel('Code')->count();
+$totalNotes = ICE_Global::getModel('Note')->count();
+$totalMembers = ICE_Global::getModel('Member')->count();
+?>
+<h1><?php _e('系统管理') ?></h1>
+<ul class="tabs">
+    <li><a class="selected" href="/admin/index"><?php _e('系统状态') ?></a></li>
+    <li><a href="/admin/audit"><?php _e('审计日志') ?></a></li>
+    <li><a href="/admin/mantain"><?php _e('系统维护') ?></a></li>
+    <li><a href="/admin/member"><?php _e('用户管理') ?></a></li>
+</ul>
+<ul>
+    <li><strong>Disk free space</strong>: <?php echo sprintf('%.2f%% (%s of %s)', $freeSpace / $totalSpace * 100, friendlySize($freeSpace), friendlySize($totalSpace)) ?></li>
+    <li><strong>Cache size</strong>: <?php echo $cacheSize, ' (', $cacheFiles, ' files)' ?> <a class="confirm" rel="Clean all caches?" href="/admin/cleancache">Clean</a></li>
+    <li><strong>Total codes</strong>: <?php echo $totalCodes?></li>
+    <li><strong>Total notes</strong>: <?php echo $totalNotes?></li>
+    <li><strong>Total members</strong>: <?php echo $totalMembers?></li>
+</ul>
+<?php
+$this->placeholder('main')->captureEnd();
+$this->placeholder('sidebar')->captureStart();
+?>
+<h3><?php _e('系统管理') ?></h3>
+<?php $this->placeholder('sidebar')->captureEnd()?>

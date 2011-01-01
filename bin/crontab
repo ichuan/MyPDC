@@ -1,0 +1,2 @@
+# back up db every 3 days
+0 0 */3 * * /var/www/pdc/bin/backup_db.sh

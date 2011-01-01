@@ -1,0 +1,49 @@
+<?php
+$t = htmlspecialchars($this->code['title']);
+$this->headTitle()->append($t);
+$this->placeholder('main')->captureStart();
+?>
+<h1><?php echo $t; ?></h1>
+<div class="action">
+    <a class="minibutton" href="/code/edit/<?php echo  $this->code['id'] ?>"><?php _e('编辑')?></a>
+    <a class="minibutton confirm" rel="<?php _e('确实要删除此份代码吗？') ?>" href="/code/delete/<?php echo  $this->code['id'] ?>"><?php _e('删除')?></a>
+    <a class="minibutton" href="/code/download/<?php echo  $this->code['id'] ?>"><?php _e('下载')?></a>
+</div>
+<p id="description"><?php echo $this->code['markdowned'] ?></p>
+<div id="highlighted"><?php echo $this->code['highlighted']; ?></div>
+<?php
+$this->placeholder('main')->captureEnd();
+$this->placeholder('sidebar')->captureStart();
+?>
+<h3><?php _e('代码摘要') ?></h3>
+<table cellspacing="0" cellpadding="0">
+    <tbody>
+        <tr>
+            <th width="60"><?php _e('所用语言') ?></th>
+            <td><a class="green" href="/code/language/<?php echo urlencode($this->code['lang']) ?>"><?php echo $this->code['lang'] ?></a></td>
+        </tr>
+        <tr>
+            <th><?php _e('代码大小') ?></th>
+            <td title="<?php echo $this->code['codebytes'] ?> bytes"><?php echo friendlySize($this->code['codebytes']) ?></td>
+        </tr>
+        <tr>
+            <th><?php _e('添加时间') ?></th>
+            <td title="<?php echo $this->code['created'] ?>"><?php echo friendlyDate($this->code['created']) ?></td>
+        </tr>
+        <?php if ($this->code['updated'] !== NULL):?>
+        <tr>
+            <th><?php _e('最后修改') ?></th>
+            <td title="<?php echo $this->code['updated'] ?>"><?php echo friendlyDate($this->code['updated']) ?></td>
+        </tr>
+        <?php endif;?>
+    </tbody>
+</table>
+<?php if (count($this->code['tags'])):?>
+<h3><?php _e('标签') ?></h3>
+<ul class="tag">
+    <?php foreach ($this->code['tags'] as $tag => $count) echo '<li><a class="tag" href="/code/tag/',urlencode($tag),'">', htmlspecialchars($tag), '</a> X ', $count, '</li>'; ?>
+</ul>
+<?php endif;?>
+<h3><?php _e('帮助') ?></h3>
+<p><?php _e('某些语言（如php）的代码中，函数名和一些关键字是可点击的链接，链向官方的说明文档。') ?></p>
+<?php $this->placeholder('sidebar')->captureEnd()?>

@@ -1,0 +1,62 @@
+<?php
+$this->headTitle()->append(_t('设置'));
+$obj = $this;
+$checkError = function($field) use ($obj) {
+    if (isset($obj->message[$field]))
+        echo '<span class="error">', $obj->message[$field], '</span>';
+};
+$this->placeholder('main')->captureStart();
+?>
+<h1><?php _e('个人设置') ?></h1>
+<?php
+foreach (array('setting', 'password') as $section)
+    if (isset($this->message[$section]) && is_array($this->message[$section]))
+        echo '<div class="notice ', $this->message[$section][0], '">', $this->message[$section][1], '</div>';
+?>
+<h2 class="withhr"><?php _e('基本设置') ?></h2>
+<form action="/setting" method="post">
+<table class="vert">
+    <tr class="odd">
+        <th width="100"><?php _e('用户名')?></th>
+        <td><?php echo $this->user->username?></td>
+    </tr>
+    <tr class="even">
+        <th><?php _e('电子邮件')?></th>
+        <td><input type="text" class="text" name="email" value="<?php echo $this->user->email ?>" /> <?php $checkError('email') ?></td>
+    </tr>
+    <tr class="odd">
+        <th><?php _e('头像')?></th>
+        <td>
+        <?php 
+        foreach (array(24, 48, 73) as $size)
+            echo '<img style="margin:0 5px;" src="', $this->avatar($this->user, $size, false), "\" alt=\"{$size}X{$size}\" title=\"{$this->user->username}\" />";
+        ?>
+        <a target="_blank" href="http://en.gravatar.com/gravatars/new"><?php _e('去 Gravatar 更换头像') ?></a></td>
+    </tr>
+    <tr class="even">
+        <th></th>
+        <td><button name="action_button" class="classy" type="submit"><span><?php _e('保存修改') ?></span></button></td>
+    </tr>
+</table>
+</form>
+<h2 class="withhr"><?php _e('更改密码') ?></h2>
+<form action="/setting/passwd" method="post">
+<table class="vert">
+    <tr class="odd">
+        <th width="100"><?php _e('新密码')?></th>
+        <td><input type="password" class="text" name="password" value="" /> <?php $checkError('password') ?></td>
+    </tr>
+    <tr class="even">
+        <th></th>
+        <td><button name="action_button" class="classy" type="submit"><span><?php _e('保存修改') ?></span></button></td>
+    </tr>
+</table>
+</form>
+<?php
+$this->placeholder('main')->captureEnd();
+$this->placeholder('sidebar')->captureStart();
+?>
+<h3><?php _e('个人设置') ?></h3>
+<p><?php _e('这里使用的是 Gravatar 的头像服务，如果需要更换头像，请点击左边的链接去 Gravatar 网站更换。') ?></p>
+<p><?php _e('电子邮件是用来接收系统发送给你的通知信件的，修改邮件地址后你的头像也将被更换为和新邮件地址关联的 Gravatar 头像。') ?></p>
+<?php $this->placeholder('sidebar')->captureEnd()?>

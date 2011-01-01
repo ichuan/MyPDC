@@ -1,0 +1,35 @@
+<?php
+$this->headTitle()->append(_t('首页'));
+$this->placeholder('main')->captureStart();
+?>
+<h1><?php echo sprintf(_t('欢迎来到 %s'), APPNAME_HTML) ?></h1>
+<p><?php _e('这里是你的个人数据中心') ?></p>
+<?php if ($this->user === NULL):?>
+<div id="signup">
+    <a href="/signup"><?php _e('现在就加入') ?></a>
+    <div id="signin"><a href="/signin"><?php _e('已有账号？点击登入') ?></a></div>
+</div>
+<?php else:?>
+<h2><?php _e('快捷入口')?></h2>
+<p><?php echo sprintf(_t('开始%s记个备忘%s。新发现有趣的代码了？%s收藏起来%s！你也可以直接跳转到你的%s近期事项%s、%s所有收藏的代码%s。'),'<a href="/note?new=memo"><strong>', '</strong></a>', '<a href="/code/new"><strong>', '</strong></a>', '<a href="/note"><strong>', '</strong></a>', '<a href="/code"><strong>', '</strong></a>') ?></p>
+<h2><?php _e('个人数据统计')?></h2>
+<p><?php echo sprintf(_t('作为 %s 第 %s 位会员，在 %s 注册到现在为止的 %s内，你一共张贴了 %d 段代码，写下了 %d 条记事。'), APPNAME_HTML, (isset($_COOKIE['lang']) && ($_COOKIE['lang'] == 'en') ? ordinalNumber($this->user->id) : $this->user->id), $this->user->date_join, friendlyDate($this->user->date_join, ''), $this->stats[0], $this->stats[1])?></p>
+<?php endif;?>
+<?php
+$this->placeholder('main')->captureEnd();
+$this->placeholder('sidebar')->captureStart();
+?>
+<h3><?php _e('什么是PDC？') ?></h3>
+<p>
+    <ul class="size12">
+        <li><strong>P</strong>ersonal <strong>D</strong>ata <strong>C</strong>enter</li>
+        <li><strong>P</strong>rivate <strong>D</strong>ata <strong>C</strong>enter</li>
+        <li><strong>P</strong>ermanent <strong>D</strong>ata <strong>C</strong>enter</li>
+        <li><strong>P</strong>rogrammer's <strong>D</strong>ata <strong>C</strong>enter</li>
+    </ul>
+</p>
+<p><?php _e('简单说，这里就是你的个人数据中心，而且是私有的、永久的。') ?></p>
+<h3><?php _e('我能在这里做什么？') ?></h3>
+<p><?php _e('你可以将平时遇到的经典代码收集于此以供未来的项目中重用；你可以将一篇优美的博文、一些好听的歌曲收藏于此。') ?></p>
+<p><?php echo sprintf(_t('更多疑问请参见 %s这里%s'), '<a href="/about">', '</a>') ?></p>
+<?php $this->placeholder('sidebar')->captureEnd()?>

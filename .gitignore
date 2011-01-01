@@ -1,0 +1,10 @@
+application/data/cache/*
+application/data/session/*
+application/data/log/*
+application/configs/application.php
+application/configs/defines.php
+application/data/static/image/captcha/*
+library/htmlpurifier/standalone/HTMLPurifier/DefinitionCache/*
+application/data/static/js/pdc.js
+application/data/backup/*
+library/pyExcelerator/*.pyc

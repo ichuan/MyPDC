@@ -1,0 +1,33 @@
+<?php
+$this->headTitle()->append(_t('计划'));
+$this->placeholder('main')->captureStart();
+?>
+<h1><?php echo APPNAME_HTML, ' ', _t('功能计划表'); ?></h1>
+<p><?php echo APPNAME_HTML, ' ', _t('一直在开发中，下面是计划中要实现的功能。可点击的项是已实现的功能。'); ?></p>
+<ul>
+    <li><a href="/code"><strong><?php _e('代码') ?></strong></a> <span class="gray size12"><?php _e('代码收集、整理、归类与重用') ?></span></li>
+    <li><strong><?php _e('收藏') ?></strong> <span class="gray size12"><?php _e('永久性收藏网络上一个链接。只需提供一个 URL，系统会自动提取你最关心的部分保存下来。') ?></span></li>
+    <li><a href="/note"><strong><?php _e('记事本') ?></strong></a> <span class="gray size12"><?php _e('可以当作普通记事本用，也可以当作自己的 ToDo List。') ?></span></li>
+    <li><strong><?php _e('服务集成') ?></strong> <span class="gray size12"><?php _e('集成你的各种其他服务，如：Flickr，Twitter，Douban 等') ?></span></li>
+    <li><strong>...</strong></li>
+</ul>
+<p><?php _e('最近缠身的事比较多，开发进度缓慢。。。') ?></p>
+<p><?php echo sprintf(_t('没有你需要的功能？来 %sFeedback%s 留言给我。'), '<a href="/feedback">', '</a>'); ?></p>
+<?php
+$this->placeholder('main')->captureEnd();
+$this->placeholder('sidebar')->captureStart();
+?>
+<h3><?php _e('什么是PDC？') ?></h3>
+<p>
+    <ul class="size12">
+        <li><strong>P</strong>ersonal <strong>D</strong>ata <strong>C</strong>enter</li>
+        <li><strong>P</strong>rivate <strong>D</strong>ata <strong>C</strong>enter</li>
+        <li><strong>P</strong>ermanent <strong>D</strong>ata <strong>C</strong>enter</li>
+        <li><strong>P</strong>rogrammer's <strong>D</strong>ata <strong>C</strong>enter</li>
+    </ul>
+</p>
+<p><?php _e('简单说，这里就是你的个人数据中心，而且是私有的、永久的。') ?></p>
+<h3><?php _e('我能在这里做什么？') ?></h3>
+<p><?php _e('你可以将平时遇到的经典代码收集于此以供未来的项目中重用；你可以将一篇优美的博文、一些好听的歌曲收藏于此。') ?></p>
+<p><?php echo sprintf(_t('更多疑问请参见 %s这里%s'), '<a href="/about">', '</a>') ?></p>
+<?php $this->placeholder('sidebar')->captureEnd()?>

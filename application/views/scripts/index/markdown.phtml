@@ -1,0 +1,33 @@
+<?php
+$this->headTitle()->append(_t('Markdown'));
+$this->placeholder('main')->captureStart();
+?>
+<h1><?php _e('Markdown 简易手册') ?></h1>
+<ul>
+    <li><p><strong><?php _e('大标题(h1)') ?>:</strong><br />A First Level Header<br />============</p></li>
+    <li><p><strong><?php _e('二号标题(h2)') ?>:</strong><br />A Second Level Header<br />----------------------------</p></li>
+    <li><p><strong><?php _e('一号至六号标题(h1~h6): 用1~6个"#"前缀') ?>:</strong><br />#### A 4th Level Header</p></li>
+    <li><p><strong><?php _e('加粗字体') ?>:</strong><br />**strong words**</p></li>
+    <li><p><strong><?php _e('斜体') ?>:</strong><br />*emphasized words*</p></li>
+    <li><p><strong><?php _e('换行(hr)') ?>:</strong><br />-------------------</p></li>
+    <li><p><strong><?php _e('无序列表: 每个条目以 *、+ 或 - 开头') ?>:</strong><br />* what<br />* when<br />* why</p></li>
+    <li><p><strong><?php _e('有序列表: 每个条目以数字编号开头') ?>:</strong><br />1. step one<br />2. step two<br />3. step three</p></li>
+    <li><strong><?php _e('链接') ?>:</strong><ul>
+        <li><?php _e('一般形式')?>: [link text](http://xxx.com)</li>
+        <li><?php _e('带 title')?>: [link text](http://xxx.com "this is title")</li>
+        <li><?php _e('引用方式')?>: <br />[link text][1]<br />[1]: http://g.cn "this is title"</li>
+    </ul></li>
+    <li><strong><?php _e('图片') ?>:</strong><ul>
+        <li><?php _e('内联方式')?>: ![alt text][http://g.cn/a.jpg "title"]</li>
+        <li><?php _e('引用方式')?>: <br />![alt text][id]<br />[id]: http://g.cn/a.jpg "this is title"</li>
+    </ul></li>
+    <li><?php _e('其他未转换的 html 标记都是 Markdown 中允许的，如：table, del, sup等') ?></li>
+    <li><?php _e('如果要显示某个被 Markdown 转换的符号，可以用 \\ 来转义') ?></li>
+</ul>
+<?php
+$this->placeholder('main')->captureEnd();
+$this->placeholder('sidebar')->captureStart();
+?>
+<h3><?php _e('手册说明') ?></h3>
+<p><?php echo sprintf(_t('这里显示的我自己整理的一份不完全的 Markdown 手册，详细语法请访问 %s这里%s 查看'), '<a href="http://daringfireball.net/projects/markdown/syntax">', '</a>') ?></p>
+<?php $this->placeholder('sidebar')->captureEnd()?>
