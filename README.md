@@ -10,6 +10,8 @@ see [http://mypdc.info/](http://mypdc.info/) for more
 Install
 =======
 
+Requires php 5.3+(Namespcing, Closure, and others required by ZendFramework), PostgreSQL8.4+(array_avg, etc)
+
 After you get this source file, check the `install/` dir, there's a `apache.conf` file for the web server.
 Along in that folder, there is a `postgres.sql` file for you to create a postgresql database.
 Then run install.sh in that folder to init the web folder
