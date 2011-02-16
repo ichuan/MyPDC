@@ -280,6 +280,24 @@ class CodeController extends Zend_Controller_Action
         $this->_helper->download($code['code'], $code['title'] . '.' . $langs[$code['language_id']], $code['codebytes']);
     }
 
+    public function exportAction()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->view->layout()->disableLayout();
+        $request = $this->getRequest();
+            set_time_limit(60); // 1 miniute
+            $py = realpath(APPLICATION_PATH . '/../bin/export_code.py');
+            $outFile = tempnam('/tmp', 'code');
+            $cmd = sprintf('python %s %d %s', $py, $this->view->user->id, $outFile);
+            exec($cmd, $o, $r);
+            if ($r === 0){
+                $size = filesize($outFile);
+                ICE_Audit::record(sprintf('导出代码为 Zip（大小：%s）', friendlySize($size)), $this->view->user->id, ICE_Audit::NOTE);
+                $this->_helper->download($outFile, 'codes.zip', $size, false, true, false);
+            }
+            unlink($outFile);
+    }
+
     public function viewAction()
     {
         $request = $this->getRequest();

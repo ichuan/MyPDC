@@ -21,7 +21,7 @@ $allow_rules = array(
     'member'    => array(
         'auth'      => 'logout',
         'member'    => array('setting', 'resetpasswd'),
-        'code'      => array('index', 'new', 'edit', 'view', 'edit', 'delete', 'download', 'tags', 'languages'),
+        'code'      => array('index', 'new', 'edit', 'view', 'edit', 'delete', 'download', 'tags', 'languages','export'),
         'note'      => array('index', 'tags', 'tag', 'export'),
         'ajax'      => array('tags', 'note'),
     ),
@@ -40,6 +40,10 @@ $deny_rules = array(
     'admin' => array(
         'vuln' => array(
             'index',
+        ),
+        'other' => array(
+            'vuln_manage', // 漏洞管理平台
+            'lang_map', // 语言映射平台
         ),
     ),
 );
